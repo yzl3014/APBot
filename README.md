@@ -65,6 +65,10 @@ ADD PIX:: [402,373][0] at [17:15:12], id=[6868], Percentage=[64.91%], total=[105
 APBot:: Image read successfully! Color at (1,1) is rgb(255,255,255)
 ```
 
+# 成品
+
+<p align="center"><img src="https://s2.loli.net/2024/02/07/YC2rjka3eLicBlt.png"><br>2024/2/7 09:28 (UTC+8)</p>
+
 # License
 
 [GPL](https://github.com/yzl3014/APBot/blob/main/LICENSE)
