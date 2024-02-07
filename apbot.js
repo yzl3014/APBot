@@ -6,10 +6,10 @@
 console.clear();
 console.log("APBot is Running!");
 var EffectivePixCount = 0; //有效像素数量。有效，即将被绘制的像素。
-const imageHeight = 300, imageWidth = 300; // 读取图片到canvas的实际尺寸。只有这个大小范围内的图片才会被绘制
+const imageHeight = 300, imageWidth = 410; // 读取图片到canvas的实际尺寸。只有这个大小范围内的图片才会被绘制
 
 /*↓↓↓↓↓↓↓↓↓↓ 您只需要更改此处 ↓↓↓↓↓↓↓↓↓↓*/
-var imgStartPoint = { x: 400, y: 0 }; // 绘制起点
+var imgStartPoint = { x: 0, y: 0 }; // 绘制起点
 /*↑↑↑↑↑↑↑↑↑↑ 您只需要更改此处 ↑↑↑↑↑↑↑↑↑↑*/
 
 /**
@@ -71,8 +71,8 @@ function imageConverter_starter() {
         reader.onload = function (e) {
             // 创建Canvas
             var cvs = document.createElement("canvas");
-            cvs.width = imageHeight;
-            cvs.height = imageWidth;
+            cvs.width = imageWidth;
+            cvs.height = imageHeight;
             // 创建Canvas Context(上下文)和图片对象，并读取获取到的图片
             var ctx = cvs.getContext('2d');
             //以默认颜色为背景。此操作会起到重要作用
@@ -105,12 +105,12 @@ function imageConverter(ctx) {
     // 遍历图片的每一个像素
     for (let y = 0; y <= imageHeight - 1; y++) {
         for (let x = 0; x <= imageWidth - 1; x++) {
-            let rgbData = ctx.getImageData(y, x, 1, 1).data; //当前像素的rgb颜色值
+            let rgbData = ctx.getImageData(x, y, 1, 1).data; //当前像素的rgb颜色值
             let deviation = []; // 与所有可用颜色的差值
             let minDeviation = 1000.00;
             let minDeviationId = -1;
             if (rgbData[0] == 10 && rgbData[1] == 154 && rgbData[2] == 56) {
-                imgRaw[x][y] = -1;
+                imgRaw[y][x] = -1; // 数组和i,j与坐标y,x对应， 而不是x,y.
                 continue;
             }
             // 遍历所有可用颜色，计算差值
@@ -124,7 +124,7 @@ function imageConverter(ctx) {
                     minDeviationId = n;
                 }
             }
-            imgRaw[x][y] = minDeviationId;
+            imgRaw[y][x] = minDeviationId;
             EffectivePixCount++;
         }
     }
@@ -191,11 +191,11 @@ async function drawImg(imgRaw, startPoint) {
     // 按imgRaw数组，进行自动绘制
     var height = imgRaw.length;
     var count = 0;
-    for (let y = 0; y <= height - 1; y++) {
+    for (let y = 0; y <= imageHeight - 1; y++) {
         console.log("ADD PIX:: [ENTER][line: " + y + "]");
         var width = imgRaw[y].length;
-        for (let x = 0; x <= width - 1; x++) {
-            let color = imgRaw[y][x]; // TODO：修正此处的代码逻辑（如果写成imgRaw[x][y]则会绘制出错，可能会倒过来或者向右翻转90度）
+        for (let x = 0; x <= imageWidth - 1; x++) {
+            let color = imgRaw[y][x]; // 数组与坐标系的像素存储方式保持一致，一行中的y坐标相等，一列中的x坐标相等
             if (color == -1) continue;
             count++;
             await sleep(100);
