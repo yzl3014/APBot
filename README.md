@@ -32,19 +32,6 @@ var imgStartPoint = { x: 400, y: 0 }; // 绘制起点
 4、在编辑框中，按下`Ctrl+Enter`键。或者右击左侧列表的代码段名称，点击`运行`按钮。
 
 5、浏览器将立即弹出一个文件选择框，选择你要绘制的图片，注意格式。**尺寸不能超过300x300，除非你修改了代码**，否则图片将被切裁。
-<<<<<<< Updated upstream
-=======
-
-6、在数秒钟后，你可以在控制台中看到快速滚动的文本。这表示程序运行正常。
-
-**注意**：如果某个像素的颜色为`#0a9a38`(或`10,154,56`)，那么这个像素将不会被绘制。
-
-# 控制台输出
-
-**注：** 在最顶端的选项卡中，切换到`控制台`选项卡。在此你可以查看实时进度。
-
-## 绘制进度
->>>>>>> Stashed changes
 
 6、在数秒钟后，你可以在控制台中看到快速滚动的文本。这表示程序运行正常。
 
@@ -80,8 +67,4 @@ APBot:: Image read successfully! Color at (1,1) is rgb(255,255,255)
 
 # License
 
-<<<<<<< Updated upstream
 [GPL](https://github.com/yzl3014/APBot/blob/main/LICENSE)
-=======
-[GPL](https://github.com/yzl3014/APBot/blob/main/LICENSE)
->>>>>>> Stashed changes
