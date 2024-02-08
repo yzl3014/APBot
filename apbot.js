@@ -1,12 +1,13 @@
 /**
  * Auto Painting Bot
  * (for https://wolfchen.top/pix)
- * 2024/2/6 by yzl3014
+ * 2024/2/8 by yzl3014
  */
 console.clear();
 console.log("APBot is Running!");
 var EffectivePixCount = 0; //有效像素数量。有效，即将被绘制的像素。
 const imageHeight = 300, imageWidth = 410; // 读取图片到canvas的实际尺寸。只有这个大小范围内的图片才会被绘制
+const delay = 80; // (单位为毫秒)绘制每个像素之间的等待时间。不能低于80，否则会堵塞。
 
 /*↓↓↓↓↓↓↓↓↓↓ 您只需要更改此处 ↓↓↓↓↓↓↓↓↓↓*/
 var imgStartPoint = { x: 0, y: 0 }; // 绘制起点
@@ -49,8 +50,33 @@ function rgb2lab(rgb) {
     z = (z > 0.008856) ? Math.pow(z, 1 / 3) : (7.787 * z) + 16 / 116;
     return [(116 * y) - 16, 500 * (x - y), 200 * (y - z)];
 }
+/**
+ * 毫秒转时分秒
+ * https://gist.github.com/remino/1563878
+ */
+function convertMS(ms) {
+    var d, h, m, s;
+    if (isNaN(ms) || ms < 0) return 'N/A';
+    if (ms < 1000) return ms + "毫秒";
+    s = Math.floor(ms / 1000);
+    m = Math.floor(s / 60);
+    s = s % 60;
+    h = Math.floor(m / 60);
+    m = m % 60;
+    d = Math.floor(h / 24);
+    h = h % 24;
+    h += d * 24;
+    return h + '时' + m + '分' + s + '秒';
+}
+/**
+ * JS Sleep功能
+ * https://blog.csdn.net/lwx33912138/article/details/127666083
+ */
+function sleep(time) {
+    return new Promise((resolve) => setTimeout(resolve, time));
+}
 
-function imageConverter_starter() {
+function init() { // 导入图片文件到Canvas
     // 创建一个input
     const inputElem = document.createElement("input");
     inputElem.type = "file";
@@ -95,7 +121,7 @@ function imageConverter_starter() {
     }, false);
     inputElem.click(); // 手动触发change事件,即模拟点击
 }
-function imageConverter(ctx) {
+function imageConverter(ctx) { // 将Canvas内的图片，按像素转换为颜色id
     EffectivePixCount = 0;
     ctx.canvas.willReadFrequently = true; // 启用高速读取优化
     // 顺序按照网站源码中的颜色id。按数组下标0,1,2,3读取，即可获取该编号对应的rgb颜色值
@@ -129,6 +155,7 @@ function imageConverter(ctx) {
         }
     }
 
+    // 此时图片已经转换完毕，可以进行绘制操作：
     drawImg(imgRaw, imgStartPoint);
     /*
     如果需要输出数组（一维数组），打开注释即可。处理完后将自动下载，名字为[时间戳.txt]
@@ -177,34 +204,43 @@ function addpix(x, y, c, num = 0) {
     document.getElementById("pixcount").innerHTML = localStorage.getItem("pixcount");
 }
 
-function sleep(time) {
-    // 参考 https://blog.csdn.net/lwx33912138/article/details/127666083
-    return new Promise((resolve) => setTimeout(resolve, time));
-}
-
 async function drawImg(imgRaw, startPoint) {
+    // async不可删除，它与sleep配合使用
+    if (("Notification" in window) && Notification.permission !== "granted") {
+        alert("APBot将在绘制结束时向您显示通知，请在关闭本弹窗后选择是否允许\n如果没有弹出选择框，请检查浏览器设置。");
+        Notification.requestPermission();
+    }
+
     console.clear();
     console.log("APBot started painting at [" + new Date().toLocaleString() + "]");
     localStorage.setItem("pixcount", 0); // 重置像素数，以便统计数字。可以注释掉
-    console.time("绘制用时");
+    const startTime = new Date(); // 开始运行时间
 
     // 按imgRaw数组，进行自动绘制
-    var height = imgRaw.length;
     var count = 0;
     for (let y = 0; y <= imageHeight - 1; y++) {
         console.log("ADD PIX:: [ENTER][line: " + y + "]");
-        var width = imgRaw[y].length;
         for (let x = 0; x <= imageWidth - 1; x++) {
             let color = imgRaw[y][x]; // 数组与坐标系的像素存储方式保持一致，一行中的y坐标相等，一列中的x坐标相等
             if (color == -1) continue;
             count++;
-            await sleep(100);
+            await sleep(delay);
             addpix(startPoint.x + x, startPoint.y + y, color, count);
         }
     }
     console.log("APBot FinishED painting at [" + new Date().toLocaleString() + "]");
-    console.timeEnd("绘制用时");
+    // 统计运行耗时
+    const endTime = new Date(); // 结束运行时间
+    const executionTime = endTime - startTime;
+    console.log("Time: " + convertMS(executionTime));
+
+    const notification = new Notification("APBot", {
+        lang: "zh-CN",
+        body: '任务已完成，耗时' + convertMS(executionTime)
+    });
 }
 
 
-imageConverter_starter();
+init();
+// 运行过程：
+// init导入文件到Canvas -> imageConverter将Canvas每个像素转换为颜色id存到数组 -> 绘制图片 

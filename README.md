@@ -39,7 +39,7 @@ var imgStartPoint = { x: 400, y: 0 }; // 绘制起点
 
 ## 绘制进度
 
-<!-- > ![](https://github.com/yzl3014/APBot/assets/79385954/35264337-0c62-4abe-b4ff-ab9ce6092cee) -->
+使用手机浏览器查看，字符可能会错位。
 
 ```text
 ADD PIX:: [402,373][0] at [17:15:12], id=[6868], Percentage=[64.91%], total=[10580]
@@ -64,6 +64,12 @@ APBot:: Image read successfully! Color at (1,1) is rgb(255,255,255)
 # 成品
 
 <p align="center"><img src="https://s2.loli.net/2024/02/07/YC2rjka3eLicBlt.png"><br>2024/2/7 09:28 (UTC+8)</p>
+
+# 特别提醒
+
+如果某个像素的颜色为`#0a9a38`(或`10,154,56`)，那么这个像素将不会被绘制。
+
+最好不要使用`jpg`等有损压缩格式。根据作者测试，使用`Photoshop CC 2019 (Release 20.0.0)`对一张图片的背景进行修改，目的是在绘制时排除背景。当我导出为jpg格式后，在图片主体的边缘处，出现了很多人眼无法识别的杂色。这些杂色被程序转换为了颜色id并绘制了出来。
 
 # License
 
